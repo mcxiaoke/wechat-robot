@@ -1,6 +1,6 @@
 
 server {
-    listen 80;
+    #listen 80;
 
     listen 443 ssl;
     ssl_certificate /etc/letsencrypt/live/mcxiaoke.com/fullchain.pem;

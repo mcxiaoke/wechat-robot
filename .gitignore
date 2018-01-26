@@ -1,3 +1,12 @@
+# others
+*.txt
+*.sqlite
+*.sqlite3
+*.db
+temp/
+output/
+tmp/
+build/
 
 # Created by https://www.gitignore.io/api/python
 

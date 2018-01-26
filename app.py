@@ -4,6 +4,8 @@ import os
 import logging
 
 from flask import Flask, request, abort, render_template
+from werobot.contrib.flask import  make_view
+from robot import robot
 from wechatpy import parse_message, create_reply
 from wechatpy.utils import check_signature
 from wechatpy.exceptions import (
@@ -23,7 +25,10 @@ from config import WECHAT_APPID as APPID
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
-
+app.add_url_rule(rule='/wechat',
+                 endpoint='/',
+                 view_func=make_view(robot),
+                 methods=['GET', 'POST'])
 
 @app.route('/')
 def index():
@@ -31,7 +36,7 @@ def index():
     return render_template('index.html', host=host)
 
 
-@app.route('/wechat', methods=['GET', 'POST'])
+#@app.route('/wechat', methods=['GET', 'POST'])
 def wechat():
     signature = request.args.get('signature', '')
     timestamp = request.args.get('timestamp', '')
