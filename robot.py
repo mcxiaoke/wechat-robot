@@ -9,35 +9,30 @@ import requests
 from werobot import WeRoBot
 from werobot.replies import TextReply, ImageReply, SuccessReply
 
-from config import WECHAT_TOKEN as TOKEN
-from config import WECHAT_AES_KEY as AES_KEY
-from config import WECHAT_APPID as APPID
-from config import WECHAT_APPSECRET as APPSECRET
-
+from config import WECHAT_TOKEN, WECHAT_AES_KEY, WECHAT_APPID, WECHAT_APPSECRET
+from const import WECHAT_CAT_WORDS, WECHAT_ERROR_HTML
+from utils import get_media_ids, get_poem_lines
 import logging
-
 logging.basicConfig(level=logging.INFO)
 
-robot = WeRoBot(token=TOKEN)
-robot.config["APP_ID"] = APPID
-robot.config["APP_SECRET"] = APPSECRET
-robot.config['ENCODING_AES_KEY'] = AES_KEY
+robot = WeRoBot()
+robot.config['TOKEN'] = WECHAT_TOKEN
+robot.config['ENCODING_AES_KEY'] = WECHAT_AES_KEY
+robot.config["APP_ID"] = WECHAT_APPID
+robot.config["APP_SECRET"] = WECHAT_APPSECRET
 
-with open('media_ids.txt') as f:
-    media_ids = f.read().splitlines()
+media_ids = get_media_ids()
+poem_lines = get_poem_lines()
 
-with codecs.open('poems.txt', 'r', 'utf8') as f:
-    poem_lines = f.read().splitlines()
-
-@robot.filter(re.compile(r".*?(猫|喵|萌|图|GIF|gif|Moew|mao|miao|miu|cat).*?"))
-def cat(message):
+@robot.filter(re.compile(WECHAT_CAT_WORDS))
+def handle_cat(message):
     if media_ids:
     	media_id = random.choice(media_ids)
         return ImageReply(message, media_id=media_id)
     return "没找到猫图喵~~~"
 
 @robot.handler
-def process(message):
+def handle_all(message):
     if poem_lines:
         return random.choice(poem_lines)
     else:
@@ -45,4 +40,4 @@ def process(message):
 
 @robot.error_page
 def make_error_page(url):
-    return "<h1>喵喵喵，这里不是给麻瓜能来的，快走开</h1>"
+    return WECHAT_ERROR_HTML
