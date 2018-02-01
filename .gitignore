@@ -7,6 +7,7 @@ temp/
 output/
 tmp/
 build/
+.vscode/
 
 # Created by https://www.gitignore.io/api/python
 
