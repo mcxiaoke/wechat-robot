@@ -36,7 +36,7 @@ def _handle_text(message, store):
             return ImageReply(message=message, media_id=media_id)
     elif type_name == TYPE_POEM:
             return get_poem_one(message.content)
-    return message.content
+    return '发这些字词有惊喜哦：猫|喵|萌|咕|噜|狗|汪|犬|吠|诗|词|曲|赋|律|调|唐|宋'
 
 @webot.text
 def we_handle_text(message):

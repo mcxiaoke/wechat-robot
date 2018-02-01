@@ -27,7 +27,7 @@ SOURCE_ROOT = os.path.join('..', 'images')
 
 TWO_HOUR_EXPIRE = 60*60*2  # in seconds
 MEDIA_ID_EXPIRE = TWO_HOUR_EXPIRE * 35  # in seconds
-ACCESS_TOKEN_KEY = 'wechat:token:v1:%s:%s'
+ACCESS_TOKEN_KEY = 'wechat:token:v1:%s'
 MEDIA_ID_KEY = 'wechat:media_ids:v1:%s:%s'
 MEDIA_ID_OUTPUT = 'data'
 MEDIA_ID_USER_KEY = 'wechat:media_ids:user:v1:%s:%s'
