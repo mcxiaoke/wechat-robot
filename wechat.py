@@ -23,6 +23,7 @@ TYPE_CAT = 'cats'
 TYPE_DOG = 'dogs'
 TYPE_POEM = 'poem'
 TYPE_OTHER = 'others'
+TYPE_UNKNOWN = 'unknown'
 SOURCE_ROOT = os.path.join('..', 'images')
 
 TWO_HOUR_EXPIRE = 60*60*2  # in seconds

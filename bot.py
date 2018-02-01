@@ -10,7 +10,7 @@ import logging
 from werobot import WeRoBot
 from werobot.replies import TextReply, ImageReply, SuccessReply
 from wechat import MediaStore, TYPE_CAT, TYPE_DOG, TYPE_POEM, TYPE_OTHER
-from utils import get_content_type, get_poem_one
+from utils import get_content_type, get_poem_one, WECHAT_UNKNOWN_TEXT, WECHAT_NO_IMAGE_TEXT
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -34,9 +34,11 @@ def _handle_text(message, store):
         logging.info('_handle_text media_id=%s' % media_id)
         if media_id:
             return ImageReply(message=message, media_id=media_id)
+        else:
+            return WECHAT_NO_IMAGE_TEXT
     elif type_name == TYPE_POEM:
             return get_poem_one(message.content)
-    return '发这些字词有惊喜哦：猫|喵|萌|咕|噜|狗|汪|犬|吠|诗|词|曲|赋|律|调|唐|宋'
+    return WECHAT_UNKNOWN_TEXT
 
 @webot.text
 def we_handle_text(message):
@@ -46,3 +48,11 @@ def we_handle_text(message):
 @miubot.text
 def miu_handle_text(message):
     return _handle_text(message, miustore)
+
+@webot.handler
+def we_handle_all(message):
+    return WECHAT_UNKNOWN_TEXT
+
+@miubot.handler
+def miu_handle_all(message):
+    return WECHAT_UNKNOWN_TEXT
