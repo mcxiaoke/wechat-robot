@@ -27,11 +27,11 @@ SOURCE_ROOT = os.path.join('..', 'images')
 
 TWO_HOUR_EXPIRE = 60*60*2  # in seconds
 MEDIA_ID_EXPIRE = TWO_HOUR_EXPIRE * 35  # in seconds
-ACCESS_TOKEN_KEY = 'wechat:token:v1:%s'
-MEDIA_ID_KEY = 'wechat:media_ids:v1:%s'
+ACCESS_TOKEN_KEY = 'wechat:token:v1:%s:%s'
+MEDIA_ID_KEY = 'wechat:media_ids:v1:%s:%s'
 MEDIA_ID_OUTPUT = 'data'
 MEDIA_ID_USER_KEY = 'wechat:media_ids:user:v1:%s:%s'
-MEDIA_ID_FILE = 'media_ids_v1_%s.txt'
+MEDIA_ID_FILE = 'media_ids_v1_%s_%s.txt'
 UPLOAD_IMAGE_URL = 'https://api.weixin.qq.com/cgi-bin/media/upload?access_token=%s&type=image'
 GET_TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s'
 
@@ -66,15 +66,16 @@ class MediaStore(object):
                     (name, app_id, app_secret))
 
     def _get_media_key(self, type_name=''):
-        return MEDIA_ID_KEY % type_name
+        return MEDIA_ID_KEY % (self.app_id, type_name)
 
     def _get_media_file(self, type_name=''):
         if not os.path.exists(MEDIA_ID_OUTPUT):
             os.makedirs(MEDIA_ID_OUTPUT)
-        return os.path.join(MEDIA_ID_OUTPUT, MEDIA_ID_FILE % type_name)
+        return os.path.join(MEDIA_ID_OUTPUT, MEDIA_ID_FILE 
+    % (self.app_id, type_name))
 
     def _get_user_key(self, user_id, type_name=''):
-        return MEDIA_ID_USER_KEY % (type_name, user_id)
+        return MEDIA_ID_USER_KEY % (self.app_id, type_name, user_id)
 
     def _get_access_token(self):
         token = self.r.get(ACCESS_TOKEN_KEY % self.app_id)
