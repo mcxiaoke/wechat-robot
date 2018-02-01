@@ -30,7 +30,7 @@ MEDIA_ID_EXPIRE = TWO_HOUR_EXPIRE * 35  # in seconds
 ACCESS_TOKEN_KEY = 'wechat:token:v1:%s'
 MEDIA_ID_KEY = 'wechat:media_ids:v1:%s:%s'
 MEDIA_ID_OUTPUT = 'data'
-MEDIA_ID_USER_KEY = 'wechat:media_ids:user:v1:%s:%s'
+MEDIA_ID_USER_KEY = 'wechat:media_ids:user:v1:%s:%s:%s'
 MEDIA_ID_FILE = 'media_ids_v1_%s_%s.txt'
 UPLOAD_IMAGE_URL = 'https://api.weixin.qq.com/cgi-bin/media/upload?access_token=%s&type=image'
 GET_TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s'
