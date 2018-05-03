@@ -72,7 +72,7 @@ class MediaStore(object):
     def _get_media_file(self, type_name=''):
         if not os.path.exists(MEDIA_ID_OUTPUT):
             os.makedirs(MEDIA_ID_OUTPUT)
-        return os.path.join(MEDIA_ID_OUTPUT, MEDIA_ID_FILE 
+        return os.path.join(MEDIA_ID_OUTPUT, MEDIA_ID_FILE
     % (self.app_id, type_name))
 
     def _get_user_key(self, user_id, type_name=''):
@@ -122,7 +122,9 @@ class MediaStore(object):
         if not source_dir or not os.path.isdir(source_dir):
             return
         logger.info('upload_images [%s] for type [%s]' % (source_dir, type_name))
-        names = os.listdir(source_dir)[:max_count]
+        names = os.listdir(source_dir)
+        if len(names) > max_count:
+            names = random.sample(names, max_count)
         count = 0
         mids = []
         for name in names:
