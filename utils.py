@@ -43,8 +43,9 @@ def get_poem_one(text):
     else:
         return WECHAT_NO_POEM_TEXT
 
+
 def get_content_type(text):
-    for word, response in WECHAT_MAPPING:
+    for word, response in WECHAT_MAPPING.iteritems():
         if re.search(word, text, re.I):
             return response, False
     # return type,is_media
