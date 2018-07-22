@@ -24,19 +24,24 @@ miubot = WeRoBot()
 miubot.config.update(CONFIG2)
 miustore = MediaStore('miubot', CONFIG2['APP_ID'], CONFIG2['APP_SECRET'])
 
+
+def _reply_one_media(message, store, type_name):
+    media_id = store.random_user_media_id(message.source, type_name)
+    logging.info('_handle_text media_id=%s' % media_id)
+    if media_id:
+        return ImageReply(message=message, media_id=media_id)
+    else:
+        return WECHAT_NO_IMAGE_TEXT
+
 def _handle_text(message, store):
     logging.info('_handle_text from=%s' % message.source)
     logging.info('_handle_text to=%s' % message.target)
     type_name, is_media = get_content_type(message.content)
     logging.info('_handle_text type=%s' % type_name)
     if is_media:
-        media_id = store.random_user_media_id(message.source, type_name)
-        logging.info('_handle_text media_id=%s' % media_id)
-        if media_id:
-            return ImageReply(message=message, media_id=media_id)
-        else:
-            return WECHAT_NO_IMAGE_TEXT
+        return _reply_one_media(message, store, type_name)
     return type_name
+
 
 @webot.text
 def we_handle_text(message):
@@ -47,9 +52,21 @@ def we_handle_text(message):
 def miu_handle_text(message):
     return _handle_text(message, miustore)
 
+
+@webot.image
+def we_handle_image(message):
+    return _reply_one_media(message, westore, TYPE_CAT)
+
+
+@miubot.image
+def miu_handle_image(message):
+    return _reply_one_media(message, miustore, TYPE_CAT)
+
+
 @webot.handler
 def we_handle_all(message):
     return WECHAT_UNKNOWN_TEXT
+
 
 @miubot.handler
 def miu_handle_all(message):

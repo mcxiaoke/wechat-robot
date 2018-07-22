@@ -8,10 +8,11 @@ import codecs
 
 from wechat import TYPE_CAT, TYPE_DOG, TYPE_POEM, TYPE_OTHER, TYPE_TEXT, TYPE_IMAGE, TYPE_UNKNOWN
 
-WECHAT_CAT_W001_REQUEST = '驯猫50法'
-WECHAT_CAT_W001_RESPONSE = '链接:https://pan.baidu.com/s/1wUgG76Ye0oOGKk_FPOHnkQ  密码:79wy'
+WECHAT_MAPPING = {
+    '驯猫50法': '链接:https://pan.baidu.com/s/1wUgG76Ye0oOGKk_FPOHnkQ  密码:79wy'
+}
 
-WECHAT_CAT_WORDS = r'.*?(猫|喵|萌|咕|噜|Moew|mao|miao|miu|cat).*?'
+WECHAT_CAT_WORDS = r'.*?(猫|喵|萌|咕|噜|毛|咪|Moew|mao|miao|miu|cat).*?'
 WECHAT_DOG_WORDS = r'.*?(狗|汪|犬|吠|dog|gou).*?'
 WECHAT_OTHER_WORDS = r'.*?(图|搞笑|表情|哦|哈|ha|hi|he|image|pic|img|gif|jpg).*?'
 WECHAT_POEM_WORDS = r'.*?(古代|文学|作品|诗|词|曲|赋|律|调|唐|宋|poem|poetry).*?'
@@ -42,11 +43,11 @@ def get_poem_one(text):
     else:
         return WECHAT_NO_POEM_TEXT
 
-
 def get_content_type(text):
+    for word, response in WECHAT_MAPPING:
+        if re.search(word, text, re.I):
+            return response, False
     # return type,is_media
-    if re.search(WECHAT_CAT_W001_REQUEST, text, re.I):
-        return WECHAT_CAT_W001_RESPONSE, False
     if re.search(WECHAT_CAT_WORDS, text, re.I):
         return TYPE_CAT, True
     elif re.search(WECHAT_DOG_WORDS, text, re.I):
