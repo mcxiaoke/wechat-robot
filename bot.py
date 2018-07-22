@@ -36,9 +36,7 @@ def _handle_text(message, store):
             return ImageReply(message=message, media_id=media_id)
         else:
             return WECHAT_NO_IMAGE_TEXT
-    elif type_name == TYPE_POEM:
-            return get_poem_one(message.content)
-    return WECHAT_UNKNOWN_TEXT
+    return type_name
 
 @webot.text
 def we_handle_text(message):

@@ -6,6 +6,11 @@ import re
 import random
 import codecs
 
+from wechat import TYPE_CAT, TYPE_DOG, TYPE_POEM, TYPE_OTHER, TYPE_TEXT, TYPE_IMAGE, TYPE_UNKNOWN
+
+WECHAT_CAT_W001_REQUEST = '驯猫50法'
+WECHAT_CAT_W001_RESPONSE = '链接:https://pan.baidu.com/s/1wUgG76Ye0oOGKk_FPOHnkQ  密码:79wy'
+
 WECHAT_CAT_WORDS = r'.*?(猫|喵|萌|咕|噜|Moew|mao|miao|miu|cat).*?'
 WECHAT_DOG_WORDS = r'.*?(狗|汪|犬|吠|dog|gou).*?'
 WECHAT_OTHER_WORDS = r'.*?(图|搞笑|表情|哦|哈|ha|hi|he|image|pic|img|gif|jpg).*?'
@@ -30,7 +35,6 @@ with codecs.open(POETRY_OF_SONG, 'r', 'utf8') as f:
 
 POEM_LINES = TANG_LINES + SONG_LINES
 
-from wechat import TYPE_CAT, TYPE_DOG, TYPE_POEM, TYPE_OTHER, TYPE_UNKNOWN
 
 def get_poem_one(text):
     if POEM_LINES:
@@ -38,8 +42,11 @@ def get_poem_one(text):
     else:
         return WECHAT_NO_POEM_TEXT
 
+
 def get_content_type(text):
     # return type,is_media
+    if re.search(WECHAT_CAT_W001_REQUEST, text, re.I):
+        return WECHAT_CAT_W001_RESPONSE, False
     if re.search(WECHAT_CAT_WORDS, text, re.I):
         return TYPE_CAT, True
     elif re.search(WECHAT_DOG_WORDS, text, re.I):
@@ -47,9 +54,10 @@ def get_content_type(text):
     elif re.search(WECHAT_OTHER_WORDS, text, re.I):
         return TYPE_OTHER, True
     elif re.search(WECHAT_POEM_WORDS, text, re.I):
-        return TYPE_POEM, False
+        return get_poem_one(text), False
     else:
-        return TYPE_UNKNOWN, False
+        return WECHAT_UNKNOWN_TEXT, False
+
 
 if __name__ == '__main__':
     print(random.choice(POEM_LINES))

@@ -23,6 +23,8 @@ TYPE_CAT = 'cats'
 TYPE_DOG = 'dogs'
 TYPE_POEM = 'poem'
 TYPE_OTHER = 'others'
+TYPE_TEXT = "text"
+TYPE_IMAGE = "image"
 TYPE_UNKNOWN = 'unknown'
 SOURCE_ROOT = os.path.join('..', 'images')
 
