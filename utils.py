@@ -5,12 +5,11 @@ import sys
 import re
 import random
 import codecs
+from itertools import izip
 
 from wechat import TYPE_CAT, TYPE_DOG, TYPE_POEM, TYPE_OTHER, TYPE_TEXT, TYPE_IMAGE, TYPE_UNKNOWN
 
-WECHAT_MAPPING = {
-    '驯猫50法': '链接:https://pan.baidu.com/s/1wUgG76Ye0oOGKk_FPOHnkQ  密码:79wy'
-}
+WORDS_FILE = 'words.txt'
 
 WECHAT_CAT_WORDS = r'.*?(猫|喵|萌|咕|噜|毛|咪|Moew|mao|miao|miu|cat).*?'
 WECHAT_DOG_WORDS = r'.*?(狗|汪|犬|吠|dog|gou).*?'
@@ -44,10 +43,23 @@ def get_poem_one(text):
         return WECHAT_NO_POEM_TEXT
 
 
+def check_words(text):
+    try:
+        with codecs.open(WORDS_FILE, 'r', 'utf8') as f:
+            words = f.readlines()
+            words = [w.strip() for w in words]
+            words = dict(izip(*([iter(words)]*2)))
+            for word, response in words.iteritems():
+                if re.search(word, text, re.I):
+                    return response, False
+    except Exception:
+        pass
+
+
 def get_content_type(text):
-    for word, response in WECHAT_MAPPING.iteritems():
-        if re.search(word, text, re.I):
-            return response, False
+    words_response = check_words(text)
+    if words_response:
+        return words_response
     # return type,is_media
     if re.search(WECHAT_CAT_WORDS, text, re.I):
         return TYPE_CAT, True
