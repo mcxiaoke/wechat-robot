@@ -18,15 +18,8 @@ import redis
 import logging
 import requests
 from requests.exceptions import RequestException
-
-TYPE_CAT = 'cats'
-TYPE_DOG = 'dogs'
-TYPE_POEM = 'poem'
-TYPE_OTHER = 'others'
-TYPE_TEXT = "text"
-TYPE_IMAGE = "image"
-TYPE_UNKNOWN = 'unknown'
-SOURCE_ROOT = os.path.join('..', 'images')
+from config import WECHAT_APPID, WECHAT_APPSECRET, WECHAT2_APPID, WECHAT2_APPSECRET
+from const import MATCH_TYPES, SOURCE_ROOT
 
 TWO_HOUR_EXPIRE = 60*60*2  # in seconds
 MEDIA_ID_EXPIRE = TWO_HOUR_EXPIRE * 35  # in seconds
@@ -66,7 +59,7 @@ class MediaStore(object):
         self.expire = expire
         self.r = r
         logger.debug('__init__ name=%s app_id=%s, app_secret=%s' %
-                    (name, app_id, app_secret))
+                     (name, app_id, app_secret))
 
     def _get_media_key(self, type_name=''):
         return MEDIA_ID_KEY % (self.app_id, type_name)
@@ -75,7 +68,7 @@ class MediaStore(object):
         if not os.path.exists(MEDIA_ID_OUTPUT):
             os.makedirs(MEDIA_ID_OUTPUT)
         return os.path.join(MEDIA_ID_OUTPUT, MEDIA_ID_FILE
-    % (self.app_id, type_name))
+                            % (self.app_id, type_name))
 
     def _get_user_key(self, user_id, type_name=''):
         return MEDIA_ID_USER_KEY % (self.app_id, type_name, user_id)
@@ -120,10 +113,11 @@ class MediaStore(object):
         except RequestException as e:
             logger.error('upload_image error=%s' % e)
 
-    def upload_images(self, source_dir, type_name='', max_count=100):
+    def upload_images(self, source_dir, type_name='', max_count=50):
         if not source_dir or not os.path.isdir(source_dir):
             return
-        logger.info('upload_images [%s] for type [%s]' % (source_dir, type_name))
+        logger.info('upload_images [%s] for type [%s]' %
+                    (source_dir, type_name))
         names = os.listdir(source_dir)
         if len(names) > max_count:
             names = random.sample(names, max_count)
@@ -175,16 +169,15 @@ class MediaStore(object):
         return self.r.srandmember(self._get_media_key(type_name))
 
 
-from config import WECHAT_APPID, WECHAT_APPSECRET, WECHAT2_APPID, WECHAT2_APPSECRET
-
 store1 = MediaStore('Cat', WECHAT_APPID, WECHAT_APPSECRET)
 store2 = MediaStore('Miu', WECHAT2_APPID, WECHAT2_APPSECRET)
 
 
 def update_app(store, root=SOURCE_ROOT):
-    for type_name in (TYPE_CAT, TYPE_DOG, TYPE_OTHER):
+    for type_name in MATCH_TYPES:
         source_dir = os.path.join(root, type_name)
         store.upload_images(source_dir, type_name)
+
 
 def update_all(root=SOURCE_ROOT):
     check_all(root)
@@ -193,13 +186,14 @@ def update_all(root=SOURCE_ROOT):
 
 
 def check_all(root=SOURCE_ROOT):
-    for type_name in (TYPE_CAT, TYPE_DOG, TYPE_OTHER):
+    for type_name in MATCH_TYPES:
         source_dir = os.path.abspath(os.path.join(root, type_name))
         if not os.path.exists(source_dir):
             print('ERROR: check_all source dir [%s] not exists' % source_dir)
             exit(1)
         if not os.path.isdir(source_dir):
-            print('ERROR: check_all source dir [%s] not directory' % source_dir)
+            print(
+                'ERROR: check_all source dir [%s] not directory' % source_dir)
             exit(2)
         if not os.listdir(source_dir):
             print('ERROR: check_all source dir [%s] is empty' % source_dir)
@@ -209,13 +203,14 @@ def check_all(root=SOURCE_ROOT):
 
 def test_all():
     for store in [store1, store2]:
-        for type_name in (TYPE_CAT, TYPE_DOG, TYPE_OTHER):
+        for type_name in MATCH_TYPES:
             print('\n[Store:%s] found %s values for type %s, read test:'
                   % (store.name, store.media_ids_length(type_name), type_name))
             for i in range(0, 10):
                 print(store1.random_user_media_id('test', type_name))
-            for i in range(0,10):
-                assert store1.random_user_media_id('test', type_name), 'No media id found'
+            for i in range(0, 10):
+                assert store1.random_user_media_id(
+                    'test', type_name), 'No media id found'
                 assert store1.random_media_id(type_name), 'No media id found'
     print('all tests passed.')
 

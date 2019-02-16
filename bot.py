@@ -9,12 +9,13 @@ import requests
 import logging
 from werobot import WeRoBot
 from werobot.replies import TextReply, ImageReply, SuccessReply
-from wechat import MediaStore, TYPE_CAT, TYPE_DOG, TYPE_POEM, TYPE_OTHER
-from utils import get_content_type, get_poem_one, WECHAT_UNKNOWN_TEXT, WECHAT_NO_IMAGE_TEXT
+from wechat import MediaStore
+from config import CONFIG, CONFIG2
+from const import DEFAULT_TYPE
+from utils import get_content_type, WECHAT_UNKNOWN_TEXT, WECHAT_NO_IMAGE_TEXT
 
 logging.basicConfig(level=logging.DEBUG)
 
-from config import CONFIG, CONFIG2
 
 webot = WeRoBot()
 webot.config.update(CONFIG)
@@ -25,7 +26,7 @@ miubot.config.update(CONFIG2)
 miustore = MediaStore('miubot', CONFIG2['APP_ID'], CONFIG2['APP_SECRET'])
 
 
-def _reply_one_media(message, store, type_name):
+def _reply_one_media(message, store, type_name=DEFAULT_TYPE):
     media_id = store.random_user_media_id(message.source, type_name)
     logging.info('_handle_text media_id=%s' % media_id)
     if media_id:
@@ -33,14 +34,13 @@ def _reply_one_media(message, store, type_name):
     else:
         return WECHAT_NO_IMAGE_TEXT
 
+
 def _handle_text(message, store):
     logging.info('_handle_text from=%s' % message.source)
     logging.info('_handle_text to=%s' % message.target)
     type_name, is_media = get_content_type(message.content)
     logging.info('_handle_text type=%s' % type_name)
-    if is_media:
-        return _reply_one_media(message, store, type_name)
-    return type_name
+    return _reply_one_media(message, store, type_name) if is_media else type_name
 
 
 @webot.text
@@ -55,12 +55,12 @@ def miu_handle_text(message):
 
 @webot.image
 def we_handle_image(message):
-    return _reply_one_media(message, westore, TYPE_CAT)
+    return _reply_one_media(message, westore)
 
 
 @miubot.image
 def miu_handle_image(message):
-    return _reply_one_media(message, miustore, TYPE_CAT)
+    return _reply_one_media(message, miustore)
 
 
 @webot.handler
