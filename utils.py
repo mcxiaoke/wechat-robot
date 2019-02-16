@@ -65,7 +65,7 @@ def get_content_type(text):
     if words_response:
         return words_response, False
 
-    for m_words, m_type in MATCH_WORDS:
+    for m_words, m_type in MATCH_WORDS.items():
         if re.search(m_words, text, re.I):
             return m_type, True
     if re.search(RE_POEM_WORDS, text, re.I):
