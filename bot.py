@@ -40,7 +40,10 @@ def _handle_text(message, store):
     logging.info('_handle_text to=%s' % message.target)
     type_name, is_media = get_content_type(message.content)
     logging.info('_handle_text type=%s' % type_name)
-    return _reply_one_media(message, store, type_name) if is_media else type_name
+    if is_media:
+        return _reply_one_media(message, store, type_name)
+    else:
+        return type_name
 
 
 @webot.text

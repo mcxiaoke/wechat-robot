@@ -113,7 +113,7 @@ class MediaStore(object):
         except RequestException as e:
             logger.error('upload_image error=%s' % e)
 
-    def upload_images(self, source_dir, type_name='', max_count=50):
+    def upload_images(self, source_dir, type_name='', max_count=30):
         if not source_dir or not os.path.isdir(source_dir):
             return
         logger.info('upload_images [%s] for type [%s]' %

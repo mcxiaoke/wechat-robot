@@ -56,15 +56,16 @@ def check_words(text):
                 if re.search(word, text, re.I):
                     return response, False
     except Exception:
-        pass
+        logging.info('check words failed')
 
 
 def get_content_type(text):
+    if text == '/list':
+        return '\n'.join(MATCH_WORDS.keys()), False
     words_response = check_words(text)
     # return matched text
     if words_response:
         return words_response, False
-
     for m_words, m_type in MATCH_WORDS.items():
         if re.search(m_words, text, re.I):
             return m_type, True
