@@ -54,7 +54,7 @@ def check_words(text):
             words = dict(izip(*([iter(words)]*2)))
             for word, response in words.iteritems():
                 if re.search(word, text, re.I):
-                    return response, False
+                    return response
     except Exception:
         logging.info('check words failed')
 
