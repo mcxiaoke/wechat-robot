@@ -190,15 +190,11 @@ def check_all(root=SOURCE_ROOT):
         source_dir = os.path.abspath(os.path.join(root, type_name))
         if not os.path.exists(source_dir):
             print('ERROR: check_all source dir [%s] not exists' % source_dir)
-            exit(1)
-        if not os.path.isdir(source_dir):
-            print(
-                'ERROR: check_all source dir [%s] not directory' % source_dir)
-            exit(2)
-        if not os.listdir(source_dir):
+        elif not os.path.isdir(source_dir):
+            print('ERROR: check_all source dir [%s] not directory' % source_dir)
+        elif not os.listdir(source_dir):
             print('ERROR: check_all source dir [%s] is empty' % source_dir)
-            exit(2)
-    print('all directories exists, check passed.')
+    #print('all directories exists, check passed.')
 
 
 def test_all():
