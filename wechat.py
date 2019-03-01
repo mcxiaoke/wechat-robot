@@ -19,7 +19,7 @@ import logging
 import requests
 from requests.exceptions import RequestException
 from config import WECHAT_APPID, WECHAT_APPSECRET, WECHAT2_APPID, WECHAT2_APPSECRET
-from const import MATCH_TYPES, SOURCE_ROOT
+from const import IMAGE_TYPES, SOURCE_ROOT
 
 TWO_HOUR_EXPIRE = 60*60*2  # in seconds
 MEDIA_ID_EXPIRE = TWO_HOUR_EXPIRE * 35  # in seconds
@@ -174,7 +174,7 @@ store2 = MediaStore('Miu', WECHAT2_APPID, WECHAT2_APPSECRET)
 
 
 def update_app(store, root=SOURCE_ROOT):
-    for type_name in MATCH_TYPES:
+    for type_name in IMAGE_TYPES:
         source_dir = os.path.join(root, type_name)
         store.upload_images(source_dir, type_name)
 
@@ -186,7 +186,7 @@ def update_all(root=SOURCE_ROOT):
 
 
 def check_all(root=SOURCE_ROOT):
-    for type_name in MATCH_TYPES:
+    for type_name in IMAGE_TYPES:
         source_dir = os.path.abspath(os.path.join(root, type_name))
         if not os.path.exists(source_dir):
             print('ERROR: check_all source dir [%s] not exists' % source_dir)
@@ -199,7 +199,7 @@ def check_all(root=SOURCE_ROOT):
 
 def test_all():
     for store in [store1, store2]:
-        for type_name in MATCH_TYPES:
+        for type_name in IMAGE_TYPES:
             print('\n[Store:%s] found %s values for type %s, read test:'
                   % (store.name, store.media_ids_length(type_name), type_name))
             for i in range(0, 10):

@@ -8,12 +8,13 @@ import codecs
 import logging
 from itertools import izip
 
-from const import SOURCE_ROOT, MATCH_WORDS
+from const import SOURCE_ROOT, IMAGE_WORDS
 
 logging.basicConfig(level=logging.DEBUG)
 
 WORDS_FILE = 'words.txt'
 POEM_LINES = []
+JOKE_LINES = []
 RE_POEM_WORDS = r'.*?(古代|文学|作品|诗|词|曲|赋|律|调|唐|宋|poem|poetry).*?'
 WECHAT_ERROR_HTML = '<html><head></head><body><h1>喵喵喵，这里不是麻瓜能来的，快走开~~~</h1></body</html>'
 WECHAT_UNKNOWN_TEXT = '发猫或狗有惊喜哦，喵喵喵~~~'
@@ -22,6 +23,7 @@ WECHAT_NO_POEM_TEXT = '还没准备好诗词，啊哈哈!'
 
 POETRY_OF_TANG = os.path.join('data', 'poetry_of_tang.txt')
 POETRY_OF_SONG = os.path.join('data', 'poetry_of_song.txt')
+JOKES_FILE = os.path.join('data', 'jokes.txt')
 
 try:
     with codecs.open(POETRY_OF_TANG, 'r', 'utf8') as f:
@@ -37,6 +39,14 @@ try:
 except:
     logging.info('init poem lines failed')
 
+try:
+    with codecs.open(JOKES_FILE, 'r', 'utf8') as f:
+        content = f.read()
+        lines = content.split('\n\n')
+        JOKE_LINES = list(filter(bool, lines))
+except:
+    logging.info('init joke lines failed')
+
 
 def get_poem_one(text):
     if POEM_LINES:
@@ -44,6 +54,11 @@ def get_poem_one(text):
     else:
         return WECHAT_NO_POEM_TEXT
 
+def get_joke_one(text):
+    if JOKE_LINES:
+        return random.choice(JOKE_LINES)
+    else:
+        return WECHAT_UNKNOWN_TEXT
 
 def check_words(text):
     # 从文件中找匹配的回复文本
@@ -61,18 +76,18 @@ def check_words(text):
 
 def get_content_type(text):
     if text == '/list':
-        return '\n'.join(MATCH_WORDS.keys()), False
+        return '\n'.join(IMAGE_WORDS.keys()), False
     words_response = check_words(text)
     # return matched text
     if words_response:
         return words_response, False
-    for m_words, m_type in MATCH_WORDS.items():
+    for m_words, m_type in IMAGE_WORDS.items():
         if re.search(m_words, text, re.I):
             return m_type, True
     if re.search(RE_POEM_WORDS, text, re.I):
         return get_poem_one(text), False
     else:
-        return WECHAT_UNKNOWN_TEXT, False
+        return get_joke_one(text), False
 
 
 if __name__ == '__main__':
