@@ -36,6 +36,7 @@ try:
         lines = content.split('\n\n')
         SONG_LINES = list(filter(bool, lines))
     POEM_LINES = TANG_LINES + SONG_LINES
+    logging.info('init poem lines success.')
 except:
     logging.info('init poem lines failed')
 
@@ -44,6 +45,7 @@ try:
         content = f.read()
         lines = content.split('\n\n')
         JOKE_LINES = list(filter(bool, lines))
+    logging.info('init joke lines success.')
 except:
     logging.info('init joke lines failed')
 
@@ -85,8 +87,10 @@ def get_content_type(text):
         if re.search(m_words, text, re.I):
             return m_type, True
     if re.search(RE_POEM_WORDS, text, re.I):
+        logging.info('poem matched')
         return get_poem_one(text), False
     else:
+        logging.info('joke matched')
         return get_joke_one(text), False
 
 
