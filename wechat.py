@@ -110,7 +110,7 @@ class MediaStore(object):
             response = requests.post(url, files=files)
             response.encoding = 'utf-8'
             return response.json()['media_id']
-        except RequestException as e:
+        except Exception as e:
             logger.error('upload_image error=%s' % e)
 
     def upload_images(self, source_dir, type_name='', max_count=30):
