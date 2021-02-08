@@ -1,3 +1,6 @@
 Flask
+redis
+cryptography
 wechatpy
+werobot
 gunicorn
