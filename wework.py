@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import json
+import os
 import time
 import requests
 import logging
@@ -30,6 +31,9 @@ _token_ts = 0
 def _load_token():
     global _token
     global _token_ts
+    if not os.path.exists(TOKEN_FILE):
+        logger.info('token file not exists')
+        return
     try:
         data = json.load(open(TOKEN_FILE, 'r'))
         if time.time()-data['ts'] < TOKEN_EXPIRES:
@@ -114,4 +118,4 @@ if __name__ == '__main__':
     app = Flask(__name__)
     app.add_url_rule('/wework/api/u5bs0CnW.send',
                      view_func=wework_send, methods=['GET', 'POST'])
-    app.run('127.0.0.1', 8008, debug=True)
+    app.run('0.0.0.0', 8001, debug=True)
