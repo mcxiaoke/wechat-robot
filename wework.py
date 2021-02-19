@@ -97,8 +97,8 @@ def send_message(content):
 
 def wework_send():
     logger.info(request.args)
-    title = request.args.get('title', '')
-    desp = request.args.get('desp', '')
+    title = request.args.get('title') or request.form.get('title')
+    desp = request.args.get('desp') or request.form.get('desp')
     if not title:
         return json.dumps({'error': 'missing title'}), 400
     if desp:
