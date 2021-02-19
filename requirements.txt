@@ -1,7 +1,6 @@
-requests
-Flask
-redis
-cryptography
-wechatpy
-werobot
-gunicorn
+cryptography==3.4.6
+Flask==1.1.2
+gunicorn==20.0.4
+redis==3.5.3
+requests==2.25.1
+WeRoBot==1.13.1

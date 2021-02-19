@@ -4,17 +4,12 @@ import os
 import time
 import requests
 import logging
-from flask import request, Flask, abort
+from flask import request, Flask
 from datetime import datetime
 from config import WX_WORK_CORP_ID, WX_WORK_APP_ID, WX_WORK_SECRET
 
-logger = logging.getLogger('wechat-work')
-logger.setLevel(logging.DEBUG)
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(levelname)s:%(name)s: %(message)s')
-ch.setFormatter(formatter)
-logger.addHandler(ch)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger('wework')
 
 ACCESS_TOKEN_URL = 'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={}&corpsecret={}'
 
@@ -66,7 +61,7 @@ def _send_token_request():
             rj = r.json()
             if rj['errcode'] == 0:
                 _save_token(rj['access_token'])
-            logger.info('_send_token_request, res:%s', rj)
+            logger.debug('_send_token_request, res:%s', rj)
     except Exception:
         logger.exception('_send_token_request')
 
@@ -93,8 +88,7 @@ def send_message(content):
     post_json = json.dumps(data)
     try:
         r = requests.post(send_url, data=post_json)
-        logger.info('send_message:[%s] response:%d %s',
-                    content, r.status_code, r.json())
+        logger.info('send_message: %d %s', r.status_code, r.json())
         return r.json(), 200
     except Exception as e:
         logger.exception('send_message')
@@ -111,6 +105,7 @@ def wework_send():
         return send_message('{}\n{}'.format(title, desp))
     else:
         return send_message(title)
+
 
 _load_token()
 
