@@ -73,6 +73,7 @@ def _get_token():
 
 
 def send_message(content):
+    logger.debug('send_message: [%s]', content)
     tk = _get_token()
     send_url = SEND_MSG_URL.format(tk)
     suffix = ' <{}>'.format(datetime.strftime(
@@ -96,7 +97,7 @@ def send_message(content):
 
 
 def wework_send():
-    logger.info(request.args)
+    logger.debug('wework_send: ARGS=%s,FORM=%s', request.args, request.form)
     title = request.args.get('title') or request.form.get('title')
     desp = request.args.get('desp') or request.form.get('desp')
     if not title:
