@@ -6,7 +6,6 @@ import re
 import random
 import codecs
 import logging
-from itertools import izip
 
 from const import SOURCE_ROOT, IMAGE_WORDS
 
@@ -68,7 +67,7 @@ def check_words(text):
         with codecs.open(WORDS_FILE, 'r', 'utf8') as f:
             words = f.readlines()
             words = [w.strip() for w in words]
-            words = dict(izip(*([iter(words)]*2)))
+            words = dict(zip(*([iter(words)]*2)))
             for word, response in words.iteritems():
                 if re.search(word, text, re.I):
                     return response

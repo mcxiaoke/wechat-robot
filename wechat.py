@@ -47,7 +47,7 @@ def get_wechat_access_token(app_id, app_secret):
 
 class MediaStore(object):
 
-    _redis = redis.StrictRedis(decode_responses=True)
+    _redis = redis.StrictRedis(host='redis', decode_responses=True)
 
     def __init__(self, name, app_id, app_secret, r=_redis, expire=MEDIA_ID_EXPIRE):
         assert name, 'name  can not be None'
@@ -194,7 +194,7 @@ def check_all(root=SOURCE_ROOT):
             print('ERROR: check_all source dir [%s] not directory' % source_dir)
         elif not os.listdir(source_dir):
             print('ERROR: check_all source dir [%s] is empty' % source_dir)
-    #print('all directories exists, check passed.')
+    # print('all directories exists, check passed.')
 
 
 def test_all():

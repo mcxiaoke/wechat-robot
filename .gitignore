@@ -118,5 +118,7 @@ venv.bak/
 config.py
 config.ini
 
+data/
+images/
 
 # End of https://www.gitignore.io/api/python
