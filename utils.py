@@ -7,6 +7,11 @@ import random
 import codecs
 import logging
 
+try:
+    from itertools import izip
+except ImportError:
+    izip = zip
+
 from const import SOURCE_ROOT, IMAGE_WORDS
 
 logging.basicConfig(level=logging.DEBUG)
@@ -72,7 +77,7 @@ def check_words(text):
                 if re.search(word, text, re.I):
                     return response
     except Exception:
-        logging.info('check words failed')
+        logging.debug('check words failed')
 
 
 def get_content_type(text):

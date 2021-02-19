@@ -36,10 +36,10 @@ def _reply_one_media(message, store, type_name=DEFAULT_TYPE):
 
 
 def _handle_text(message, store):
-    logging.info('_handle_text from=%s' % message.source)
-    logging.info('_handle_text to=%s' % message.target)
+    logging.debug('_handle_text from=%s' % message.source)
+    logging.debug('_handle_text to=%s' % message.target)
     type_name, is_media = get_content_type(message.content)
-    logging.info('_handle_text type={}'.format(type_name))
+    logging.info('_handle_text type={}'.format(type_name[:8]))
     if is_media:
         return _reply_one_media(message, store, type_name)
     else:

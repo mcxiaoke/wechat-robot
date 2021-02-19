@@ -4,27 +4,26 @@ from werobot.contrib.flask import make_view
 from bot import webot, miubot
 from wework import wework_send
 
-app = Flask(__name__)
-app.add_url_rule(rule='/wechat',
+application = Flask(__name__)
+application.add_url_rule(rule='/wechat',
                  endpoint='/wechat',
                  view_func=make_view(webot),
                  methods=['GET', 'POST'])
 
-app.add_url_rule(rule='/miuchat',
+application.add_url_rule(rule='/miuchat',
                  endpoint='/miuchat',
                  view_func=make_view(miubot),
                  methods=['GET', 'POST'])
 
-app.add_url_rule('/wework/api/u5bs0CnW.send',
+application.add_url_rule('/wework/api/u5bs0CnW.send',
                  view_func=wework_send,
                  methods=['GET', 'POST'])
 
-
-@app.route('/')
+@application.route('/')
 def index():
     host = request.url_root
     return render_template('index.html', host=host)
 
 
 if __name__ == '__main__':
-    app.run('127.0.0.1', 8000, debug=True)
+    application.run('127.0.0.1', 8000, debug=True)
