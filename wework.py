@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import json
 import os
-import time
+import redis
 import requests
 import logging
 from flask import request, Flask
@@ -15,61 +15,34 @@ ACCESS_TOKEN_URL = 'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={}&corps
 
 SEND_MSG_URL = 'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={}'
 
-TOKEN_EXPIRES = 7000  # 7200 seconds
+TOKEN_KEY = 'wework_token_{}'.format(WX_WORK_APP_ID)
 
-TOKEN_FILE = '/tmp/{}_token.json'.format(WX_WORK_CORP_ID)
+REDIS_HOST = 'localhost' if 'HOST_REDIS' in os.environ else 'redis'
+_redis = redis.StrictRedis(host=REDIS_HOST, port=6379, decode_responses=True)
 
-_token = None
-_token_ts = 0
+logger.info('init with app:%s, corp:%s', WX_WORK_APP_ID, WX_WORK_CORP_ID)
 
-
-def _load_token():
-    global _token
-    global _token_ts
-    if not os.path.exists(TOKEN_FILE):
-        logger.info('token file not exists')
-        return
-    try:
-        data = json.load(open(TOKEN_FILE, 'r'))
-        if time.time()-data['ts'] < TOKEN_EXPIRES:
-            _token_ts = data['ts']
-            _token = data['tk']
-            logger.info('token file loaded, token:%s', _token[:8])
-    except Exception:
-        logger.exception('token file not found')
+def _set_token(new_token):
+    _redis.set(TOKEN_KEY, new_token, ex=7200)
+    logger.info('token saved to redis, token:%s', new_token[:8])
 
 
-def _save_token(new_token):
-    global _token_ts
-    global _token
-    if new_token and len(new_token) > 32:
-        _token_ts = time.time()
-        _token = new_token
-        data = {
-            'ts': _token_ts,
-            'tk': _token
-        }
-        json.dump(data, open(TOKEN_FILE, 'w'))
-        logger.info('token file saved, token:%s', _token[:8])
+def _get_token():
+    return _redis.get(TOKEN_KEY) or _request_token()
 
 
-def _send_token_request():
+def _request_token():
     token_url = ACCESS_TOKEN_URL.format(WX_WORK_CORP_ID, WX_WORK_SECRET)
     try:
         r = requests.get(token_url)
         if r.status_code == 200:
             rj = r.json()
+            logger.debug('_request_token, res:%s', rj)
             if rj['errcode'] == 0:
-                _save_token(rj['access_token'])
-            logger.debug('_send_token_request, res:%s', rj)
+                _set_token(rj['access_token'])
+                return rj['access_token']
     except Exception:
-        logger.exception('_send_token_request')
-
-
-def _get_token():
-    if not _token or time.time() - _token_ts > TOKEN_EXPIRES:
-        _send_token_request()
-    return _token
+        logger.exception('_request_token')
 
 
 def send_message(content):
@@ -86,9 +59,8 @@ def send_message(content):
             'content': '{}\n{}'.format(content, suffix)
         }
     }
-    post_json = json.dumps(data)
     try:
-        r = requests.post(send_url, data=post_json)
+        r = requests.post(send_url, data=json.dumps(data))
         logger.info('send_message: %d %s', r.status_code, r.json())
         return r.json(), 200
     except Exception as e:
@@ -97,9 +69,9 @@ def send_message(content):
 
 
 def wework_send():
-    logger.debug('wework_send: ARGS=%s,FORM=%s', request.args, request.form)
-    title = request.args.get('title') or request.form.get('title')
-    desp = request.args.get('desp') or request.form.get('desp')
+    logger.debug('wework_send: args=%s', request.values)
+    title = request.values.get('title')
+    desp = request.values.get('desp')
     if not title:
         return json.dumps({'error': 'missing title'}), 400
     if desp:
@@ -108,10 +80,8 @@ def wework_send():
         return send_message(title)
 
 
-_load_token()
-
 if __name__ == '__main__':
     app = Flask(__name__)
     app.add_url_rule('/wework/api/u5bs0CnW.send',
                      view_func=wework_send, methods=['GET', 'POST'])
-    app.run('0.0.0.0', 8001, debug=True)
+    app.run('0.0.0.0', 8008, debug=True)

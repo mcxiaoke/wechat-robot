@@ -8,13 +8,16 @@ services:
     ports:
       - "8001:8001"
     volumes:
-     - ./tmp:/tmp
+      - ./tmp:/tmp
     depends_on:
       - redis
-      
+    environment:
+      - TZ=Asia/Shanghai
   redis:
     image: "redis:6.0.10-alpine"
     container_name: redis
     restart: always
+    volumes:
+      - ./persist:/data
     ports:
       - "6379:6379"
