@@ -2,7 +2,7 @@
 from flask import Flask, request, render_template, abort
 from werobot.contrib.flask import make_view
 from bot import webot, miubot
-from wework import wework_send
+from wework import wework_send, wework_receive
 
 application = Flask(__name__)
 application.add_url_rule(rule='/wechat',
@@ -17,6 +17,10 @@ application.add_url_rule(rule='/miuchat',
 
 application.add_url_rule('/wework/api/u5bs0CnW.send',
                  view_func=wework_send,
+                 methods=['GET', 'POST'])
+
+application.add_url_rule('/wework/api/receive',
+                 view_func=wework_receive,
                  methods=['GET', 'POST'])
 
 @application.route('/')

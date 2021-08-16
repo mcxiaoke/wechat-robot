@@ -6,7 +6,11 @@ import requests
 import logging
 from flask import request, Flask
 from datetime import datetime
-from config import WX_WORK_CORP_ID, WX_WORK_APP_ID, WX_WORK_SECRET
+from wechatpy.enterprise.crypto import WeChatCrypto
+from wechatpy.exceptions import InvalidSignatureException
+from wechatpy.enterprise.exceptions import InvalidCorpIdException
+from wechatpy.enterprise import parse_message, create_reply
+from config import WX_WORK_CORP_ID, WX_WORK_APP_ID, WX_WORK_SECRET, WX_WORK_HOOK_TOKEN, WX_WORK_HOOK_AES_KEY
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('wework')
@@ -19,7 +23,7 @@ TOKEN_KEY = 'wework_token_{}'.format(WX_WORK_APP_ID)
 
 REDIS_HOST = 'localhost' if 'HOST_REDIS' in os.environ else 'redis'
 _redis = redis.StrictRedis(host=REDIS_HOST, port=6379, decode_responses=True)
-
+_crypto = WeChatCrypto(WX_WORK_HOOK_TOKEN, WX_WORK_HOOK_AES_KEY, WX_WORK_CORP_ID)
 logger.info('init with app:%s, corp:%s', WX_WORK_APP_ID, WX_WORK_CORP_ID)
 
 def _set_token(new_token):
@@ -79,7 +83,37 @@ def wework_send():
     else:
         return send_message(title)
 
-
+def wework_receive():
+    logger.info('wework_receive: args=%s', request.values)
+    try:
+        signature = request.values.get('msg_signature')
+        timestamp = request.values.get('timestamp')
+        nonce = request.values.get('nonce')
+        echostr = request.values.get('echostr')
+        if echostr:
+            echostr = _crypto.check_signature(
+                signature,
+                timestamp,
+                nonce,
+                echostr
+            )
+            return echostr
+        else:
+            decrypted_xml = _crypto.decrypt_message(
+                request.data,
+                signature,
+                timestamp,
+                nonce
+            )
+        
+    except InvalidSignatureException:
+        raise 
+    else:
+        msg = parse_message(decrypted_xml)
+        logger.info('wework_receive msg=%s', msg)
+        
+        return 'OK'
+    
 if __name__ == '__main__':
     app = Flask(__name__)
     app.add_url_rule('/wework/api/u5bs0CnW.send',
