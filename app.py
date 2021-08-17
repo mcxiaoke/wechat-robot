@@ -13,7 +13,7 @@ application.add_url_rule(rule='/wechat',
 application.add_url_rule(rule='/miuchat',
                  endpoint='/miuchat',
                  view_func=make_view(miubot),
-                 methods=['GET', 'POST'])
+                 methods=['GET', 'POST']) 
 
 application.add_url_rule('/wework/api/u5bs0CnW.send',
                  view_func=wework_send,

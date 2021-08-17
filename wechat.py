@@ -32,10 +32,12 @@ UPLOAD_IMAGE_URL = 'https://api.weixin.qq.com/cgi-bin/media/upload?access_token=
 GET_TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s'
 
 REDIS_HOST = 'localhost' if 'HOST_REDIS' in os.environ else 'redis'
-
+REDIS_PORT = 6379 if 'HOST_REDIS' in os.environ else 16379
 logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger('MediaStore')
+
+logger.info('wechat init with redis %s:%d' % (REDIS_HOST, REDIS_PORT))
 
 
 def get_wechat_access_token(app_id, app_secret):
@@ -49,7 +51,7 @@ def get_wechat_access_token(app_id, app_secret):
 
 class MediaStore(object):
 
-    _redis = redis.StrictRedis(host=REDIS_HOST, port=6379, decode_responses=True)
+    _redis = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
 
     def __init__(self, name, app_id, app_secret, r=_redis, expire=MEDIA_ID_EXPIRE):
         assert name, 'name  can not be None'
