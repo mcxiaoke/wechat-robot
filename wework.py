@@ -11,6 +11,7 @@ from wechatpy.exceptions import InvalidSignatureException
 from wechatpy.enterprise.exceptions import InvalidCorpIdException
 from wechatpy.enterprise import parse_message, create_reply
 from config import WX_WORK_CORP_ID, WX_WORK_APP_ID, WX_WORK_SECRET, WX_WORK_HOOK_TOKEN, WX_WORK_HOOK_AES_KEY
+from mqtt import forwardSMS, sendCommand
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('wework')
@@ -112,7 +113,9 @@ def wework_receive():
     else:
         msg = parse_message(decrypted_xml)
         logger.info('wework_receive msg=%s', msg)
-        
+        if msg.type == 'text':
+            sendCommand('%s (%s/%s)' %(msg.content, 
+            msg.source,msg.create_time.strftime('%Y-%m-%dT%H:%M:%S')))
         return 'OK'
     
 if __name__ == '__main__':

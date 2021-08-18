@@ -6,3 +6,4 @@ gunicorn==20.0.4
 redis==3.5.3
 wechatpy==1.8.15
 WeRoBot==1.13.1
+paho.mqtt==1.5.1
