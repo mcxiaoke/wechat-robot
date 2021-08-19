@@ -32,7 +32,7 @@ UPLOAD_IMAGE_URL = 'https://api.weixin.qq.com/cgi-bin/media/upload?access_token=
 GET_TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s'
 
 REDIS_HOST = 'localhost' if 'HOST_REDIS' in os.environ else 'redis'
-REDIS_PORT = 6379 if 'HOST_REDIS' in os.environ else 16379
+REDIS_PORT = 6379 if 'HOST_REDIS' in os.environ else 6379
 logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger('MediaStore')

@@ -23,7 +23,7 @@ SEND_MSG_URL = 'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={}
 TOKEN_KEY = 'wework_token_{}'.format(WX_WORK_APP_ID)
 
 REDIS_HOST = 'localhost' if 'HOST_REDIS' in os.environ else 'redis'
-REDIS_PORT = 6379 if 'HOST_REDIS' in os.environ else 16379
+REDIS_PORT = 6379 if 'HOST_REDIS' in os.environ else 6379
 _redis = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
 _crypto = WeChatCrypto(WX_WORK_HOOK_TOKEN, WX_WORK_HOOK_AES_KEY, WX_WORK_CORP_ID)
 logger.info('init with app:%s, corp:%s', WX_WORK_APP_ID, WX_WORK_CORP_ID)
