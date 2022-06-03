@@ -1,4 +1,4 @@
-bottle==0.12.19
+bottle==0.12.20
 click==8.0.1
 cryptography==3.4.6
 Flask==1.1.2
